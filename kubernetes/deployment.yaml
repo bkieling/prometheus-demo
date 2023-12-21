@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prometheus-demo
+  name: prometheus-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-demo
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/actuator/prometheus'
+        prometheus.io/port: '8081'
+      labels:
+        app: prometheus-demo
+    spec:
+      containers:
+        - image: bkieling974/prometheus-demo
+          name: prometheus-demo
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: prometheus-demo
+  name: prometheus-demo
+spec:
+  ports:
+    - name: 8080-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: prometheus-demo
+  type: ClusterIP
